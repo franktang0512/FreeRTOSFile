@@ -70,7 +70,7 @@ N*/
 N
 N/* Standard includes. */
 N#include <stdlib.h>
-L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h" 1
+L 1 "D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h" 1
 N/* stdlib.h: ANSI draft (X3J11 May 88) library header, section 4.10 */
 N/* Copyright (C) Codemist Ltd., 1988-1993.                          */
 N/* Copyright 1991-1998,2014 ARM Limited. All rights reserved.       */
@@ -1043,7 +1043,7 @@ N
 N/* end of stdlib.h */
 L 72 "..\Source\tasks.c" 2
 N#include <string.h>
-L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h" 1
+L 1 "D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h" 1
 N/* string.h: ANSI 'C' (X3J11 Oct 88) library header, section 4.11 */
 N/* Copyright (C) Codemist Ltd., 1988-1993.                        */
 N/* Copyright 1991-1993 ARM Limited. All rights reserved.          */
@@ -1678,7 +1678,7 @@ N/*
 N * Include the generic headers required for the FreeRTOS port being used.
 N */
 N#include <stddef.h>
-L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h" 1
+L 1 "D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h" 1
 N/* stddef.h: ANSI 'C' (X3J11 Oct 88) library header, section 4.1.4 */
 N
 N/* Copyright (C) ARM Ltd., 1999
@@ -1819,7 +1819,7 @@ N *     contains the typedefs required to build FreeRTOS.  Read the instructions
 N *     in FreeRTOS/source/stdint.readme for more information.
 N */
 N#include <stdint.h> /* READ COMMENT ABOVE. */
-L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h" 1
+L 1 "D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h" 1
 N/* Copyright (C) ARM Ltd., 1999,2014 */
 N/* All rights reserved */
 N
@@ -9358,12 +9358,19 @@ N
 N#if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
 X#if( 1 == 1 )
 N
-N	BaseType_t xTaskCreate(	TaskFunction_t pxTaskCode,
-N							const char * const pcName,
-N							const uint16_t usStackDepth,
-N							void * const pvParameters,
-N							UBaseType_t uxPriority,
-N							TaskHandle_t * const pxCreatedTask ) /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
+N	BaseType_t xTaskCreate(	
+N//	TaskFunction_t pxTaskCode,
+N//							const char * const pcName,
+N//							const uint16_t usStackDepth,
+N//							void * const pvParameters,
+N//							UBaseType_t uxPriority,
+N//							TaskHandle_t * const pxCreatedTask
+N	TaskFunction_t pxTaskCode,	const char * const pcName,	const uint16_t usStackDepth, 	void * const pvParameters, 	UBaseType_t uxPriority, 	TaskHandle_t * const pxCreatedTask
+N
+N							) /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
+N								
+N							//BaseType_t xTaskCreate(	TaskFunction_t pxTaskCode,	const char * const pcName,	const uint16_t usStackDepth, 	void * const pvParameters, 	UBaseType_t uxPriority, 	TaskHandle_t * const pxCreatedTask );							
+N							
 N	{
 N	TCB_t *pxNewTCB;
 N	BaseType_t xReturn;

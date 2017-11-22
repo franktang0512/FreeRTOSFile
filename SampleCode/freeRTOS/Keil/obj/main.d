@@ -1,8 +1,8 @@
 .\obj\main.o: ..\main.c
-.\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\obj\main.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\obj\main.o: ..\..\..\Library\Device\Nuvoton\NUC100Series\Include\NUC100Series.h
 .\obj\main.o: ..\..\..\Library\CMSIS\Include\core_cm0.h
-.\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\main.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\main.o: ..\..\..\Library\CMSIS\Include\core_cmInstr.h
 .\obj\main.o: ..\..\..\Library\CMSIS\Include\core_cmFunc.h
 .\obj\main.o: ..\..\..\Library\Device\Nuvoton\NUC100Series\Include\system_NUC100Series.h
@@ -27,7 +27,7 @@
 .\obj\main.o: ..\..\..\Library\StdDriver\inc\CLK.h
 .\obj\main.o: ..\..\..\Library\StdDriver\inc\ACMP.h
 .\obj\main.o: ..\Source\include\FreeRTOS.h
-.\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\obj\main.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\obj\main.o: ..\..\freeRTOS\FreeRTOSConfig.h
 .\obj\main.o: ..\Source\include\projdefs.h
 .\obj\main.o: ..\Source\include\portable.h

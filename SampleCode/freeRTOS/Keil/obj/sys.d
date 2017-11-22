@@ -1,7 +1,7 @@
 .\obj\sys.o: ..\..\..\Library\StdDriver\src\sys.c
 .\obj\sys.o: ..\..\..\Library\Device\Nuvoton\NUC100Series\Include\NUC100Series.h
 .\obj\sys.o: ..\..\..\Library\CMSIS\Include\core_cm0.h
-.\obj\sys.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\sys.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\sys.o: ..\..\..\Library\CMSIS\Include\core_cmInstr.h
 .\obj\sys.o: ..\..\..\Library\CMSIS\Include\core_cmFunc.h
 .\obj\sys.o: ..\..\..\Library\Device\Nuvoton\NUC100Series\Include\system_NUC100Series.h

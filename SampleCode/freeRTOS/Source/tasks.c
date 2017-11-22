@@ -673,12 +673,19 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB ) PRIVILEGED_FUNCTION;
 
 #if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
 
-	BaseType_t xTaskCreate(	TaskFunction_t pxTaskCode,
-							const char * const pcName,
-							const uint16_t usStackDepth,
-							void * const pvParameters,
-							UBaseType_t uxPriority,
-							TaskHandle_t * const pxCreatedTask ) /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
+	BaseType_t xTaskCreate(	
+//	TaskFunction_t pxTaskCode,
+//							const char * const pcName,
+//							const uint16_t usStackDepth,
+//							void * const pvParameters,
+//							UBaseType_t uxPriority,
+//							TaskHandle_t * const pxCreatedTask
+	TaskFunction_t pxTaskCode,	const char * const pcName,	const uint16_t usStackDepth, 	void * const pvParameters, 	UBaseType_t uxPriority, 	TaskHandle_t * const pxCreatedTask
+
+							) /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
+								
+							//BaseType_t xTaskCreate(	TaskFunction_t pxTaskCode,	const char * const pcName,	const uint16_t usStackDepth, 	void * const pvParameters, 	UBaseType_t uxPriority, 	TaskHandle_t * const pxCreatedTask );							
+							
 	{
 	TCB_t *pxNewTCB;
 	BaseType_t xReturn;

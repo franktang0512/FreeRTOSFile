@@ -6,6 +6,7 @@
 ".\obj\uart.o"
 ".\obj\sys.o"
 ".\obj\clk.o"
+".\obj\gpio.o"
 ".\obj\croutine.o"
 ".\obj\event_groups.o"
 ".\obj\list.o"

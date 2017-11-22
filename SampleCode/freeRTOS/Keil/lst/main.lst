@@ -13,7 +13,7 @@ N * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
 N *
 N ******************************************************************************/
 N#include <stdio.h>
-L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h" 1
+L 1 "D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h" 1
 N/* stdio.h: ANSI 'C' (X3J11 Oct 88) library header, section 4.9 */
 N/* Copyright (C) Codemist Ltd., 1988-1993                       */
 N/* Copyright 1991-1998 ARM Limited. All rights reserved.        */
@@ -1396,7 +1396,7 @@ S  #endif
 N#endif
 N
 N#include <stdint.h>                      /* standard types definitions                      */
-L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h" 1
+L 1 "D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h" 1
 N/* Copyright (C) ARM Ltd., 1999,2014 */
 N/* All rights reserved */
 N
@@ -24608,7 +24608,7 @@ N/*
 N * Include the generic headers required for the FreeRTOS port being used.
 N */
 N#include <stddef.h>
-L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h" 1
+L 1 "D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h" 1
 N/* stddef.h: ANSI 'C' (X3J11 Oct 88) library header, section 4.1.4 */
 N
 N/* Copyright (C) ARM Ltd., 1999
@@ -32848,10 +32848,12 @@ N
 N#endif /* CO_ROUTINE_H */
 L 21 "..\main.c" 2
 N
+N
 N#define PLL_CLOCK           50000000
 N
 N
 Nstatic void vTaskMsgPro1(void* pvParameters);
+Nstatic void vTaskMsgPro2(void* pvParameters);
 N
 Nstatic TaskHandle_t xHandleTaskMsgPro1 = NULL;
 Xstatic TaskHandle_t xHandleTaskMsgPro1 = 0;
@@ -32971,6 +32973,10 @@ N/*        Bit length of a transaction: 8      */
 N/* SPI1, SS0(PC.8), CLK(PC.9), MISO0(PC.10)   */
 N/*                MOSI0(PC.11)                */
 N/**********************************************/
+N
+N
+N
+N
 Nint main(void)
 N{
 N    /* Unlock protected registers */
@@ -32982,29 +32988,52 @@ N    SYS_LockReg();
 N	
 N		UART0_Init();
 N
+N
 N		printf("test\r\n");
-N		//vStartThreadTasks();
+N		vStartThreadTasks();
 N		vTaskStartScheduler();
+N
 N
 N		while(1);
 N
 N}
 N
-N/*
+N
 Nvoid vStartThreadTasks( void )
 N{
+W "..\main.c" 157 28 argument of type "signed char *" is incompatible with parameter of type "const char *const"
 N		xTaskCreate(vTaskMsgPro1,(signed char *) "vTaskMsgPro1",512,NULL,2,( xTaskHandle * ) NULL );
+X		xTaskCreate(vTaskMsgPro1,(signed char *) "vTaskMsgPro1",512,0,2,( TaskHandle_t * ) 0 );
+W "..\main.c" 158 28 argument of type "signed char *" is incompatible with parameter of type "const char *const"
+N		xTaskCreate(vTaskMsgPro2,(signed char *) "vTaskMsgPro2",512,NULL,2,( xTaskHandle * ) NULL );
+X		xTaskCreate(vTaskMsgPro2,(signed char *) "vTaskMsgPro2",512,0,2,( TaskHandle_t * ) 0 );
 N}
-N這段程式碼不知道要做什麼
-N*/
+N
 Nstatic void vTaskMsgPro1(void* pvParameters)
 N{
 N		while(1)
 N		{
 N				printf("Task1\r\n");
+N//				GPIO_SetMode(PC, BIT12, GPIO_PMD_OUTPUT);
+N//				GPIO_SetMode(PC, BIT13, GPIO_PMD_OUTPUT);
+N//			  PC12 = 0;
+N//				PC13 = 1;
+N			
+N
+N				vTaskDelay(500);
+N		}
+N}
+Nstatic void vTaskMsgPro2(void* pvParameters)
+N{
+N		while(1)
+N		{
+N				printf("Task2\r\n");
+N//				GPIO_SetMode(PC, BIT12, GPIO_PMD_OUTPUT);
+N//				GPIO_SetMode(PC, BIT13, GPIO_PMD_OUTPUT);
+N//				PC13 = 0;
+N//				PC12 = 1;
 N				vTaskDelay(1000);
 N		}
 N}
 N/*** (C) COPYRIGHT 2014 Nuvoton Technology Corp. ***/
-W "..\main.c" 153 13 function "vTaskMsgPro1"  was declared but never referenced
-W "..\main.c" 27 21 variable "xHandleTaskMsgPro1"  was declared but never referenced
+W "..\main.c" 29 21 variable "xHandleTaskMsgPro1"  was declared but never referenced

@@ -1,8 +1,8 @@
 .\obj\retarget.o: ..\..\..\Library\StdDriver\src\retarget.c
-.\obj\retarget.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\obj\retarget.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\obj\retarget.o: ..\..\..\Library\Device\Nuvoton\NUC100Series\Include\NUC100Series.h
 .\obj\retarget.o: ..\..\..\Library\CMSIS\Include\core_cm0.h
-.\obj\retarget.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\retarget.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\retarget.o: ..\..\..\Library\CMSIS\Include\core_cmInstr.h
 .\obj\retarget.o: ..\..\..\Library\CMSIS\Include\core_cmFunc.h
 .\obj\retarget.o: ..\..\..\Library\Device\Nuvoton\NUC100Series\Include\system_NUC100Series.h

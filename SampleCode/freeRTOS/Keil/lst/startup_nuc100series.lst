@@ -699,7 +699,7 @@ ARM Macro Assembler    Page 11
               00000000 
 Command Line: --16 --debug --xref --diag_suppress=9931 --cpu=Cortex-M0 --apcs=i
 nterwork --depend=.\obj\startup_nuc100series.d -o.\obj\startup_nuc100series.o -
-IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__EVAL SET
+ID:\Keil_v5\ARM\RV31\INC -ID:\Keil_v5\ARM\CMSIS\Include --predefine="__EVAL SET
 A 1" --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 524" -
 -list=.\lst\startup_nuc100series.lst ..\..\..\Library\Device\Nuvoton\NUC100Seri
 es\Source\ARM\startup_NUC100Series.s

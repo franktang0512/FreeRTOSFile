@@ -1,16 +1,286 @@
-L 1 "..\..\..\Library\Device\Nuvoton\NUC100Series\Source\system_NUC100Series.c"
+L 1 "..\..\..\Library\StdDriver\src\gpio.c"
 N/**************************************************************************//**
-N * @file     system_NUC100Series.c
+N * @file     gpio.c
+N * @version  V3.00
+N * $Revision: 2 $
+N * $Date: 15/05/04 3:27p $
+N * @brief    GPIO driver source file
+N *
+N * @note
+N * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
+N*****************************************************************************/
+N
+N#include "NUC100Series.h"
+L 1 "..\..\..\Library\Device\Nuvoton\NUC100Series\Include\NUC100Series.h" 1
+N/**************************************************************************//**
+N * @file     NUC100Series.h
 N * @version  V3.0
-N * $Revision: 1 $
-N * $Date: 14/12/08 11:47a $
-N * @brief    NUC100 Series CMSIS System File
+N * $Revision: 20 $
+N * $Date: 15/05/12 5:48p $
+N * @brief    NUC100 Series Peripheral Access Layer Header File
 N *
 N * @note
 N * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
 N *
 N ******************************************************************************/
-N#include <stdint.h>
+N
+N
+N
+N/**
+N  \mainpage Introduction
+N  *
+N  *
+N  * This user manual describes the usage of NUC100 Series MCU device driver
+N  *
+N  * <b>Disclaimer</b>
+N  *
+N  * The Software is furnished "AS IS", without warranty as to performance or results, and
+N  * the entire risk as to performance or results is assumed by YOU. Nuvoton disclaims all
+N  * warranties, express, implied or otherwise, with regard to the Software, its use, or
+N  * operation, including without limitation any and all warranties of merchantability, fitness
+N  * for a particular purpose, and non-infringement of intellectual property rights.
+N  *
+N  * <b>Copyright Notice</b>
+N  *
+N  * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
+N  */
+N
+N/**
+N  * \page PG_REV Revision History
+N  *
+N  * <b>Revision 3.00.002</b>
+N  * \li Fix SC_SET_STOP_BIT_LEN define error in SC Driver.
+N  * \li Fix all IAR samples to set entry point from __iar_program_start to Reset_Handler.
+N  * \li Fix all samples that run faster than 50MHz. (NUC100 series only support up to 50MHz).
+N  * \li Fix UART1->IRCR setting bug in IrDA_FunctionTxTest().
+N  * \li Fix Flush FIFO end test message print bug in the end of RS485_9bitModeSlave().
+N  * \li Fix the wrong shift position for HCLK divider in main() of SYS sample code.
+N  * \li Fix PLLCON_SETTING constant define from SYSCLK_PLLCON_50MHz_XTAL to CLK_PLLCON_50MHz_HXT.
+N  * \li Fix bug on CLKO multi-function pin configuration in SYS_Init() of same samples.
+N  * \li Fix UA_LIN_CTL[4] bit field name is "MUTE_EN" not "WAKE_EN" in UART LIN_CTL Bit Field Definitions. 
+N  * \li Fix CLK_SetCoreClock() core lock range from "25~50MHz" to "25~72MHz".
+N  * \li Fix CLK_SysTickDelay() bug, that COUNTFLAG(SysTick_CTRL[16]) may not be cleared after write SysTick_VAL.
+N  * \li Fix typo in UA_LIN_CTL constants definitions of UART driver, it is "UART_LIN_CTL_LIN_BKDET_EN" not "UART_LIN_CTL_LIN_BKDET_ENN".
+N  * \li Fix UA_LIN_CTL[4] bit field name of UART driver. It is "MUTE_EN" not "WAKE_EN" in UA_LIN_CTL constants definitions.
+N  * \li Fix API declare name from I2C_SetClockBusFreq() to I2C_SetBusClockFreq() in I2C driver.
+N  * \li Fix SYS_IS_SYSTEM_RST() bug in SYS driver, it is "SYS_RSTSRC_RSTS_SYS_Msk" not "SYS_RSTSRC_RSTS_MCU_Msk".
+N  * \li Fix typo of PD14 Multi-Function constant definitions.
+N  * \li Fix clear Time-out flag method bug in I2C_ClearTimeoutFlag() of I2C driver.
+N  * \li Fix PDMA_IS_CH_BUSY() definition bug in PDMA driver.
+N  * \li Remove unused PWRCON, FREQ_72MHZ constant definitions from clock driver.
+N  * \li Remove unused constant define "RXBUFSIZE".
+N  * \li Add SPI_SET_SS_LEVEL() macro definition. This macro allows user to set both SPI_SS pins.
+N  * \li Add a lack macro, SYS_IS_LVR_RST() to SYS driver.
+N  * \li Add UART FIFO size constants definitions to UART driver.
+N  * \li Add CLK_PLLCON_25MHz_HXT, CLK_PLLCON_25MHz_HIRC, CLK_PLLCON_24MHz_HXT, and CLK_PLLCON_24MHz_HIRC constant definitions to CLK driver.
+N  * \li Add FMC_MultiBoot_SwReset sample code to show how to boot to different AP.
+N  * \li Modify time-out counter to a fix value and not to use SystemCoreClockUpdate() in CLK_WaitClockReady() to improve compatibility.
+N  * \li Revise the following four macro definitions to avoid affecting another SPI_SS pin, SPI_SET_SS0_HIGH(), SPI_SET_SS1_HIGH(), SPI_SET_SS0_LOW() and SPI_SET_SS1_LOW().
+N  *
+N  * <b>Revision 3.00.001</b>
+N  * \li First Release to support Nuvoton BSP v3.0
+N*/
+N
+N#ifndef __NUC100Series_H__
+N#define __NUC100Series_H__
+N
+N/*
+N * ==========================================================================
+N * ---------- Interrupt Number Definition -----------------------------------
+N * ==========================================================================
+N*/
+N
+N/** @addtogroup CMSIS Device Definitions for CMSIS
+N  Interrupt Number Definition and Configurations for CMSIS
+N  @{
+N*/
+N
+N/**
+N * @details  Interrupt Number Definition. The maximum of 32 Specific Interrupts are possible.
+N */
+N
+Ntypedef enum IRQn
+N{
+N    /******  Cortex-M0 Processor Exceptions Numbers ***************************************************/
+N    NonMaskableInt_IRQn         = -14,    /*!< Non Maskable Interrupt                                 */
+N    HardFault_IRQn              = -13,    /*!< Cortex-M0 Hard Fault Interrupt                         */
+N    SVCall_IRQn                 = -5,     /*!< Cortex-M0 SV Call Interrupt                            */
+N    PendSV_IRQn                 = -2,     /*!< Cortex-M0 Pend SV Interrupt                            */
+N    SysTick_IRQn                = -1,     /*!< Cortex-M0 System Tick Interrupt                        */
+N
+N    /******  ARMIKMCU Swift specific Interrupt Numbers ************************************************/
+N    BOD_IRQn                  = 0,        /*!< Brown-Out Low Voltage Detected Interrupt               */
+N    WDT_IRQn                  = 1,        /*!< Watch Dog Timer Interrupt                              */
+N    EINT0_IRQn                = 2,        /*!< EINT0 Interrupt                                        */
+N    EINT1_IRQn                = 3,        /*!< EINT1 Interrupt                                        */
+N    GPAB_IRQn                 = 4,        /*!< GPIO_PA/PB Interrupt                                   */
+N    GPCDEF_IRQn               = 5,        /*!< GPIO_PC/PD/PE/PF Interrupt                             */
+N    PWMA_IRQn                 = 6,        /*!< PWMA Interrupt                                         */
+N    PWMB_IRQn                 = 7,        /*!< PWMB Interrupt                                         */
+N    TMR0_IRQn                 = 8,        /*!< TIMER0 Interrupt                                       */
+N    TMR1_IRQn                 = 9,        /*!< TIMER1 Interrupt                                       */
+N    TMR2_IRQn                 = 10,       /*!< TIMER2 Interrupt                                       */
+N    TMR3_IRQn                 = 11,       /*!< TIMER3 Interrupt                                       */
+N    UART02_IRQn               = 12,       /*!< UART0/UART2 Interrupt                                  */
+N    UART1_IRQn                = 13,       /*!< UART1 Interrupt                                        */
+N    SPI0_IRQn                 = 14,       /*!< SPI0 Interrupt                                         */
+N    SPI1_IRQn                 = 15,       /*!< SPI1 Interrupt                                         */
+N    SPI2_IRQn                 = 16,       /*!< SPI2 Interrupt                                         */
+N    SPI3_IRQn                 = 17,       /*!< SPI3 Interrupt                                         */
+N    I2C0_IRQn                 = 18,       /*!< I2C0 Interrupt                                         */
+N    I2C1_IRQn                 = 19,       /*!< I2C1 Interrupt                                         */
+N    CAN0_IRQn                 = 20,       /*!< CAN0 Interrupt                                         */
+N    CAN1_IRQn                 = 21,       /*!< CAN1 Interrupt                                         */
+N    SC012_IRQn                = 22,       /*!< SC0/SC1/SC2 Interrupt                                  */
+N    USBD_IRQn                 = 23,       /*!< USB device Interrupt                                   */
+N    PS2_IRQn                  = 24,       /*!< PS/2 device Interrupt                                  */
+N    ACMP_IRQn                 = 25,       /*!< ACMP0 Interrupt                                        */
+N    PDMA_IRQn                 = 26,       /*!< PDMA Interrupt                                         */
+N    I2S_IRQn                  = 27,       /*!< I2S Interrupt                                          */
+N    PWRWU_IRQn                = 28,       /*!< Power Down Wake Up Interrupt                           */
+N    ADC_IRQn                  = 29,       /*!< ADC Interrupt                                          */
+N    IRC_IRQn                  = 30,       /*!< IRC TRIM Interrupt                                     */
+N    RTC_IRQn                  = 31        /*!< RTC Interrupt                                          */
+N} IRQn_Type;
+N
+N
+N/*
+N * ==========================================================================
+N * ----------- Processor and Core Peripheral Section ------------------------
+N * ==========================================================================
+N */
+N
+N/* Configuration of the Cortex-M0 Processor and Core Peripherals */
+N#define __MPU_PRESENT           0       /*!< armikcmu does not provide a MPU present or not       */
+N#define __NVIC_PRIO_BITS        2       /*!< armikcmu Supports 2 Bits for the Priority Levels     */
+N#define __Vendor_SysTickConfig  0       /*!< Set to 1 if different SysTick Config is used         */
+N
+N
+N/*@}*/ /* end of group CMSIS */
+N
+N
+N#include "core_cm0.h"                   /* Cortex-M0 processor and core peripherals               */
+L 1 "..\..\..\Library\CMSIS\Include\core_cm0.h" 1
+N/**************************************************************************//**
+N * @file     core_cm0.h
+N * @brief    CMSIS Cortex-M0 Core Peripheral Access Layer Header File
+N * @version  V3.01
+N * @date     13. March 2012
+N *
+N * @note
+N * Copyright (C) 2009-2012 ARM Limited. All rights reserved.
+N *
+N * @par
+N * ARM Limited (ARM) is supplying this software for use with Cortex-M
+N * processor based microcontrollers.  This file can be freely distributed
+N * within development tools that are supporting such ARM based processors.
+N *
+N * @par
+N * THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
+N * OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
+N * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
+N * ARM SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
+N * CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+N *
+N ******************************************************************************/
+N#if defined ( __ICCARM__ )
+X#if 0L
+S #pragma system_include  /* treat file as system include file for MISRA check */
+N#endif
+N
+N#ifdef __cplusplus
+S extern "C" {
+N#endif
+N
+N#ifndef __CORE_CM0_H_GENERIC
+N#define __CORE_CM0_H_GENERIC
+N
+N/** @addtogroup CMSIS_Definitions CMSIS
+N  @{
+N*/
+N
+N/** \page CMSIS_MISRA_Exceptions  MISRA-C:2004 Compliance Exceptions
+N  CMSIS violates the following MISRA-C:2004 rules:
+N
+N   \li Required Rule 8.5, object/function definition in header file.<br>
+N     Function definitions in header files are used to allow 'inlining'.
+N
+N   \li Required Rule 18.4, declaration of union type or object of union type: '{...}'.<br>
+N     Unions are used for effective representation of core registers.
+N
+N   \li Advisory Rule 19.7, Function-like macro defined.<br>
+N     Function-like macros are used to allow more efficient code.
+N */
+N
+N
+N/*******************************************************************************
+N *                 CMSIS definitions
+N ******************************************************************************/
+N/** \ingroup Cortex_M0
+N  @{
+N */
+N
+N/*  CMSIS CM0 definitions */
+N#define __CM0_CMSIS_VERSION_MAIN  (0x03)                                   /*!< [31:16] CMSIS HAL main version   */
+N#define __CM0_CMSIS_VERSION_SUB   (0x01)                                   /*!< [15:0]  CMSIS HAL sub version    */
+N#define __CM0_CMSIS_VERSION       ((__CM0_CMSIS_VERSION_MAIN << 16) | \
+N                                    __CM0_CMSIS_VERSION_SUB          )     /*!< CMSIS HAL version number         */
+X#define __CM0_CMSIS_VERSION       ((__CM0_CMSIS_VERSION_MAIN << 16) |                                     __CM0_CMSIS_VERSION_SUB          )      
+N
+N#define __CORTEX_M                (0x00)                                   /*!< Cortex-M Core                    */
+N
+N
+N#if   defined ( __CC_ARM )
+X#if   1L
+N  #define __ASM            __asm                                      /*!< asm keyword for ARM Compiler          */
+N  #define __INLINE         __inline                                   /*!< inline keyword for ARM Compiler       */
+N  #define __STATIC_INLINE  static __inline
+N
+N#elif defined ( __ICCARM__ )
+S  #define __ASM            __asm                                      /*!< asm keyword for IAR Compiler          */
+S  #define __INLINE         inline                                     /*!< inline keyword for IAR Compiler. Only available in High optimization mode! */
+S  #define __STATIC_INLINE  static inline
+S
+S#elif defined ( __GNUC__ )
+S  #define __ASM            __asm                                      /*!< asm keyword for GNU Compiler          */
+S  #define __INLINE         inline                                     /*!< inline keyword for GNU Compiler       */
+S  #define __STATIC_INLINE  static inline
+S
+S#elif defined ( __TASKING__ )
+S  #define __ASM            __asm                                      /*!< asm keyword for TASKING Compiler      */
+S  #define __INLINE         inline                                     /*!< inline keyword for TASKING Compiler   */
+S  #define __STATIC_INLINE  static inline
+S
+N#endif
+N
+N/** __FPU_USED indicates whether an FPU is used or not. This core does not support an FPU at all
+N*/
+N#define __FPU_USED       0
+N
+N#if defined ( __CC_ARM )
+X#if 1L
+N  #if defined __TARGET_FPU_VFP
+X  #if 0L
+S    #warning "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+N  #endif
+N
+N#elif defined ( __ICCARM__ )
+S  #if defined __ARMVFP__
+S    #warning "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+S  #endif
+S
+S#elif defined ( __GNUC__ )
+S  #if defined (__VFP_FP__) && !defined(__SOFTFP__)
+S    #warning "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+S  #endif
+S
+S#elif defined ( __TASKING__ )
+S  #if defined __FPU_VFP__
+S    #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+S  #endif
+N#endif
+N
+N#include <stdint.h>                      /* standard types definitions                      */
 L 1 "D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h" 1
 N/* Copyright (C) ARM Ltd., 1999,2014 */
 N/* All rights reserved */
@@ -341,278 +611,7 @@ N
 N#endif /* __stdint_h */
 N
 N/* end of stdint.h */
-L 13 "..\..\..\Library\Device\Nuvoton\NUC100Series\Source\system_NUC100Series.c" 2
-N#include "NUC100Series.h"
-L 1 "..\..\..\Library\Device\Nuvoton\NUC100Series\Include\NUC100Series.h" 1
-N/**************************************************************************//**
-N * @file     NUC100Series.h
-N * @version  V3.0
-N * $Revision: 20 $
-N * $Date: 15/05/12 5:48p $
-N * @brief    NUC100 Series Peripheral Access Layer Header File
-N *
-N * @note
-N * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
-N *
-N ******************************************************************************/
-N
-N
-N
-N/**
-N  \mainpage Introduction
-N  *
-N  *
-N  * This user manual describes the usage of NUC100 Series MCU device driver
-N  *
-N  * <b>Disclaimer</b>
-N  *
-N  * The Software is furnished "AS IS", without warranty as to performance or results, and
-N  * the entire risk as to performance or results is assumed by YOU. Nuvoton disclaims all
-N  * warranties, express, implied or otherwise, with regard to the Software, its use, or
-N  * operation, including without limitation any and all warranties of merchantability, fitness
-N  * for a particular purpose, and non-infringement of intellectual property rights.
-N  *
-N  * <b>Copyright Notice</b>
-N  *
-N  * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
-N  */
-N
-N/**
-N  * \page PG_REV Revision History
-N  *
-N  * <b>Revision 3.00.002</b>
-N  * \li Fix SC_SET_STOP_BIT_LEN define error in SC Driver.
-N  * \li Fix all IAR samples to set entry point from __iar_program_start to Reset_Handler.
-N  * \li Fix all samples that run faster than 50MHz. (NUC100 series only support up to 50MHz).
-N  * \li Fix UART1->IRCR setting bug in IrDA_FunctionTxTest().
-N  * \li Fix Flush FIFO end test message print bug in the end of RS485_9bitModeSlave().
-N  * \li Fix the wrong shift position for HCLK divider in main() of SYS sample code.
-N  * \li Fix PLLCON_SETTING constant define from SYSCLK_PLLCON_50MHz_XTAL to CLK_PLLCON_50MHz_HXT.
-N  * \li Fix bug on CLKO multi-function pin configuration in SYS_Init() of same samples.
-N  * \li Fix UA_LIN_CTL[4] bit field name is "MUTE_EN" not "WAKE_EN" in UART LIN_CTL Bit Field Definitions. 
-N  * \li Fix CLK_SetCoreClock() core lock range from "25~50MHz" to "25~72MHz".
-N  * \li Fix CLK_SysTickDelay() bug, that COUNTFLAG(SysTick_CTRL[16]) may not be cleared after write SysTick_VAL.
-N  * \li Fix typo in UA_LIN_CTL constants definitions of UART driver, it is "UART_LIN_CTL_LIN_BKDET_EN" not "UART_LIN_CTL_LIN_BKDET_ENN".
-N  * \li Fix UA_LIN_CTL[4] bit field name of UART driver. It is "MUTE_EN" not "WAKE_EN" in UA_LIN_CTL constants definitions.
-N  * \li Fix API declare name from I2C_SetClockBusFreq() to I2C_SetBusClockFreq() in I2C driver.
-N  * \li Fix SYS_IS_SYSTEM_RST() bug in SYS driver, it is "SYS_RSTSRC_RSTS_SYS_Msk" not "SYS_RSTSRC_RSTS_MCU_Msk".
-N  * \li Fix typo of PD14 Multi-Function constant definitions.
-N  * \li Fix clear Time-out flag method bug in I2C_ClearTimeoutFlag() of I2C driver.
-N  * \li Fix PDMA_IS_CH_BUSY() definition bug in PDMA driver.
-N  * \li Remove unused PWRCON, FREQ_72MHZ constant definitions from clock driver.
-N  * \li Remove unused constant define "RXBUFSIZE".
-N  * \li Add SPI_SET_SS_LEVEL() macro definition. This macro allows user to set both SPI_SS pins.
-N  * \li Add a lack macro, SYS_IS_LVR_RST() to SYS driver.
-N  * \li Add UART FIFO size constants definitions to UART driver.
-N  * \li Add CLK_PLLCON_25MHz_HXT, CLK_PLLCON_25MHz_HIRC, CLK_PLLCON_24MHz_HXT, and CLK_PLLCON_24MHz_HIRC constant definitions to CLK driver.
-N  * \li Add FMC_MultiBoot_SwReset sample code to show how to boot to different AP.
-N  * \li Modify time-out counter to a fix value and not to use SystemCoreClockUpdate() in CLK_WaitClockReady() to improve compatibility.
-N  * \li Revise the following four macro definitions to avoid affecting another SPI_SS pin, SPI_SET_SS0_HIGH(), SPI_SET_SS1_HIGH(), SPI_SET_SS0_LOW() and SPI_SET_SS1_LOW().
-N  *
-N  * <b>Revision 3.00.001</b>
-N  * \li First Release to support Nuvoton BSP v3.0
-N*/
-N
-N#ifndef __NUC100Series_H__
-N#define __NUC100Series_H__
-N
-N/*
-N * ==========================================================================
-N * ---------- Interrupt Number Definition -----------------------------------
-N * ==========================================================================
-N*/
-N
-N/** @addtogroup CMSIS Device Definitions for CMSIS
-N  Interrupt Number Definition and Configurations for CMSIS
-N  @{
-N*/
-N
-N/**
-N * @details  Interrupt Number Definition. The maximum of 32 Specific Interrupts are possible.
-N */
-N
-Ntypedef enum IRQn
-N{
-N    /******  Cortex-M0 Processor Exceptions Numbers ***************************************************/
-N    NonMaskableInt_IRQn         = -14,    /*!< Non Maskable Interrupt                                 */
-N    HardFault_IRQn              = -13,    /*!< Cortex-M0 Hard Fault Interrupt                         */
-N    SVCall_IRQn                 = -5,     /*!< Cortex-M0 SV Call Interrupt                            */
-N    PendSV_IRQn                 = -2,     /*!< Cortex-M0 Pend SV Interrupt                            */
-N    SysTick_IRQn                = -1,     /*!< Cortex-M0 System Tick Interrupt                        */
-N
-N    /******  ARMIKMCU Swift specific Interrupt Numbers ************************************************/
-N    BOD_IRQn                  = 0,        /*!< Brown-Out Low Voltage Detected Interrupt               */
-N    WDT_IRQn                  = 1,        /*!< Watch Dog Timer Interrupt                              */
-N    EINT0_IRQn                = 2,        /*!< EINT0 Interrupt                                        */
-N    EINT1_IRQn                = 3,        /*!< EINT1 Interrupt                                        */
-N    GPAB_IRQn                 = 4,        /*!< GPIO_PA/PB Interrupt                                   */
-N    GPCDEF_IRQn               = 5,        /*!< GPIO_PC/PD/PE/PF Interrupt                             */
-N    PWMA_IRQn                 = 6,        /*!< PWMA Interrupt                                         */
-N    PWMB_IRQn                 = 7,        /*!< PWMB Interrupt                                         */
-N    TMR0_IRQn                 = 8,        /*!< TIMER0 Interrupt                                       */
-N    TMR1_IRQn                 = 9,        /*!< TIMER1 Interrupt                                       */
-N    TMR2_IRQn                 = 10,       /*!< TIMER2 Interrupt                                       */
-N    TMR3_IRQn                 = 11,       /*!< TIMER3 Interrupt                                       */
-N    UART02_IRQn               = 12,       /*!< UART0/UART2 Interrupt                                  */
-N    UART1_IRQn                = 13,       /*!< UART1 Interrupt                                        */
-N    SPI0_IRQn                 = 14,       /*!< SPI0 Interrupt                                         */
-N    SPI1_IRQn                 = 15,       /*!< SPI1 Interrupt                                         */
-N    SPI2_IRQn                 = 16,       /*!< SPI2 Interrupt                                         */
-N    SPI3_IRQn                 = 17,       /*!< SPI3 Interrupt                                         */
-N    I2C0_IRQn                 = 18,       /*!< I2C0 Interrupt                                         */
-N    I2C1_IRQn                 = 19,       /*!< I2C1 Interrupt                                         */
-N    CAN0_IRQn                 = 20,       /*!< CAN0 Interrupt                                         */
-N    CAN1_IRQn                 = 21,       /*!< CAN1 Interrupt                                         */
-N    SC012_IRQn                = 22,       /*!< SC0/SC1/SC2 Interrupt                                  */
-N    USBD_IRQn                 = 23,       /*!< USB device Interrupt                                   */
-N    PS2_IRQn                  = 24,       /*!< PS/2 device Interrupt                                  */
-N    ACMP_IRQn                 = 25,       /*!< ACMP0 Interrupt                                        */
-N    PDMA_IRQn                 = 26,       /*!< PDMA Interrupt                                         */
-N    I2S_IRQn                  = 27,       /*!< I2S Interrupt                                          */
-N    PWRWU_IRQn                = 28,       /*!< Power Down Wake Up Interrupt                           */
-N    ADC_IRQn                  = 29,       /*!< ADC Interrupt                                          */
-N    IRC_IRQn                  = 30,       /*!< IRC TRIM Interrupt                                     */
-N    RTC_IRQn                  = 31        /*!< RTC Interrupt                                          */
-N} IRQn_Type;
-N
-N
-N/*
-N * ==========================================================================
-N * ----------- Processor and Core Peripheral Section ------------------------
-N * ==========================================================================
-N */
-N
-N/* Configuration of the Cortex-M0 Processor and Core Peripherals */
-N#define __MPU_PRESENT           0       /*!< armikcmu does not provide a MPU present or not       */
-N#define __NVIC_PRIO_BITS        2       /*!< armikcmu Supports 2 Bits for the Priority Levels     */
-N#define __Vendor_SysTickConfig  0       /*!< Set to 1 if different SysTick Config is used         */
-N
-N
-N/*@}*/ /* end of group CMSIS */
-N
-N
-N#include "core_cm0.h"                   /* Cortex-M0 processor and core peripherals               */
-L 1 "..\..\..\Library\CMSIS\Include\core_cm0.h" 1
-N/**************************************************************************//**
-N * @file     core_cm0.h
-N * @brief    CMSIS Cortex-M0 Core Peripheral Access Layer Header File
-N * @version  V3.01
-N * @date     13. March 2012
-N *
-N * @note
-N * Copyright (C) 2009-2012 ARM Limited. All rights reserved.
-N *
-N * @par
-N * ARM Limited (ARM) is supplying this software for use with Cortex-M
-N * processor based microcontrollers.  This file can be freely distributed
-N * within development tools that are supporting such ARM based processors.
-N *
-N * @par
-N * THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-N * OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-N * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-N * ARM SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-N * CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-N *
-N ******************************************************************************/
-N#if defined ( __ICCARM__ )
-X#if 0L
-S #pragma system_include  /* treat file as system include file for MISRA check */
-N#endif
-N
-N#ifdef __cplusplus
-S extern "C" {
-N#endif
-N
-N#ifndef __CORE_CM0_H_GENERIC
-N#define __CORE_CM0_H_GENERIC
-N
-N/** @addtogroup CMSIS_Definitions CMSIS
-N  @{
-N*/
-N
-N/** \page CMSIS_MISRA_Exceptions  MISRA-C:2004 Compliance Exceptions
-N  CMSIS violates the following MISRA-C:2004 rules:
-N
-N   \li Required Rule 8.5, object/function definition in header file.<br>
-N     Function definitions in header files are used to allow 'inlining'.
-N
-N   \li Required Rule 18.4, declaration of union type or object of union type: '{...}'.<br>
-N     Unions are used for effective representation of core registers.
-N
-N   \li Advisory Rule 19.7, Function-like macro defined.<br>
-N     Function-like macros are used to allow more efficient code.
-N */
-N
-N
-N/*******************************************************************************
-N *                 CMSIS definitions
-N ******************************************************************************/
-N/** \ingroup Cortex_M0
-N  @{
-N */
-N
-N/*  CMSIS CM0 definitions */
-N#define __CM0_CMSIS_VERSION_MAIN  (0x03)                                   /*!< [31:16] CMSIS HAL main version   */
-N#define __CM0_CMSIS_VERSION_SUB   (0x01)                                   /*!< [15:0]  CMSIS HAL sub version    */
-N#define __CM0_CMSIS_VERSION       ((__CM0_CMSIS_VERSION_MAIN << 16) | \
-N                                    __CM0_CMSIS_VERSION_SUB          )     /*!< CMSIS HAL version number         */
-X#define __CM0_CMSIS_VERSION       ((__CM0_CMSIS_VERSION_MAIN << 16) |                                     __CM0_CMSIS_VERSION_SUB          )      
-N
-N#define __CORTEX_M                (0x00)                                   /*!< Cortex-M Core                    */
-N
-N
-N#if   defined ( __CC_ARM )
-X#if   1L
-N  #define __ASM            __asm                                      /*!< asm keyword for ARM Compiler          */
-N  #define __INLINE         __inline                                   /*!< inline keyword for ARM Compiler       */
-N  #define __STATIC_INLINE  static __inline
-N
-N#elif defined ( __ICCARM__ )
-S  #define __ASM            __asm                                      /*!< asm keyword for IAR Compiler          */
-S  #define __INLINE         inline                                     /*!< inline keyword for IAR Compiler. Only available in High optimization mode! */
-S  #define __STATIC_INLINE  static inline
-S
-S#elif defined ( __GNUC__ )
-S  #define __ASM            __asm                                      /*!< asm keyword for GNU Compiler          */
-S  #define __INLINE         inline                                     /*!< inline keyword for GNU Compiler       */
-S  #define __STATIC_INLINE  static inline
-S
-S#elif defined ( __TASKING__ )
-S  #define __ASM            __asm                                      /*!< asm keyword for TASKING Compiler      */
-S  #define __INLINE         inline                                     /*!< inline keyword for TASKING Compiler   */
-S  #define __STATIC_INLINE  static inline
-S
-N#endif
-N
-N/** __FPU_USED indicates whether an FPU is used or not. This core does not support an FPU at all
-N*/
-N#define __FPU_USED       0
-N
-N#if defined ( __CC_ARM )
-X#if 1L
-N  #if defined __TARGET_FPU_VFP
-X  #if 0L
-S    #warning "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
-N  #endif
-N
-N#elif defined ( __ICCARM__ )
-S  #if defined __ARMVFP__
-S    #warning "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
-S  #endif
-S
-S#elif defined ( __GNUC__ )
-S  #if defined (__VFP_FP__) && !defined(__SOFTFP__)
-S    #warning "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
-S  #endif
-S
-S#elif defined ( __TASKING__ )
-S  #if defined __FPU_VFP__
-S    #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
-S  #endif
-N#endif
-N
-N#include <stdint.h>                      /* standard types definitions                      */
+L 116 "..\..\..\Library\CMSIS\Include\core_cm0.h" 2
 N#include <core_cmInstr.h>                /* Core Instruction Access                         */
 L 1 "..\..\..\Library\CMSIS\Include\core_cmInstr.h" 1
 N/**************************************************************************//**
@@ -23414,72 +23413,92 @@ N
 N
 N
 N
-L 14 "..\..\..\Library\Device\Nuvoton\NUC100Series\Source\system_NUC100Series.c" 2
+L 13 "..\..\..\Library\StdDriver\src\gpio.c" 2
 N
+N/** @addtogroup Standard_Driver Standard Driver
+N  @{
+N*/
 N
-N/*----------------------------------------------------------------------------
-N  Clock Variable definitions
-N *----------------------------------------------------------------------------*/
-Nuint32_t SystemCoreClock  = __HSI;             /*!< System Clock Frequency (Core Clock) */
-Xuint32_t SystemCoreClock  = (50000000UL);              
-Nuint32_t CyclesPerUs      = (__HSI / 1000000); /* Cycles per micro second */
-Xuint32_t CyclesPerUs      = ((50000000UL) / 1000000);  
-Nuint32_t PllClock         = __HSI;             /*!< PLL Output Clock Frequency */
-Xuint32_t PllClock         = (50000000UL);              
-Nuint32_t gau32ClkSrcTbl[] = {__HXT, __LXT, __HSI, __LIRC, NULL, NULL, NULL, __HIRC};
-Xuint32_t gau32ClkSrcTbl[] = {(12000000UL), (32768UL), (50000000UL), (10000UL), 0, 0, 0, (22118400UL)};
+N/** @addtogroup GPIO_Driver GPIO Driver
+N  @{
+N*/
 N
+N/** @addtogroup GPIO_EXPORTED_FUNCTIONS GPIO Exported Functions
+N  @{
+N*/
 N
-N/*----------------------------------------------------------------------------
-N  Clock functions
-N  This function is used to update the variable SystemCoreClock
-N  and must be called whenever the core clock is changed.
-N *----------------------------------------------------------------------------*/
-Nvoid SystemCoreClockUpdate(void)             /* Get Core Clock Frequency      */
+N/**
+N * @brief       Set GPIO operation mode
+N *
+N * @param[in]   port        GPIO port. It could be PA, PB, PC, PD, PE or PF.
+N * @param[in]   u32PinMask  The single or multiple pins of specified GPIO port.
+N *                          It could be BIT0 ~ BIT15 for PA, PB, PC, PD and PE GPIO port.
+N *                          It could be BIT0 ~ BIT3 for PF GPIO port.
+N * @param[in]   u32Mode     Operation mode. . It could be \n
+N *                          GPIO_PMD_INPUT, GPIO_PMD_OUTPUT, GPIO_PMD_OPEN_DRAIN, GPIO_PMD_QUASI.
+N *
+N * @return      None
+N *
+N * @details     This function is used to set specified GPIO operation mode.
+N */
+Nvoid GPIO_SetMode(GPIO_T *port, uint32_t u32PinMask, uint32_t u32Mode)
 N{
-N    uint32_t u32Freq, u32ClkSrc;
-N    uint32_t u32HclkDiv;
+N    uint32_t i;
 N
-N    /* Update PLL Clock */
-N    PllClock = CLK_GetPLLClockFreq();
-N
-N    u32ClkSrc = CLK->CLKSEL0 & CLK_CLKSEL0_HCLK_S_Msk;
-X    u32ClkSrc = ((CLK_T *) ((( uint32_t)0x50000000) + 0x00200))->CLKSEL0 & (7ul << 0);
-N
-N    if(u32ClkSrc != CLK_CLKSEL0_HCLK_S_PLL)
-X    if(u32ClkSrc != (0x2UL<<0))
+N    for(i = 0; i < GPIO_PIN_MAX; i++)
+X    for(i = 0; i < 16; i++)
 N    {
-N        /* Use the clock sources directly */
-N        u32Freq = gau32ClkSrcTbl[u32ClkSrc];
+N        if(u32PinMask & (1 << i))
+N        {
+N            port->PMD = (port->PMD & ~(0x3 << (i << 1))) | (u32Mode << (i << 1));
+N        }
 N    }
-N    else
-N    {
-N        /* Use PLL clock */
-N        u32Freq = PllClock;
-N    }
-N
-N    u32HclkDiv = (CLK->CLKDIV & CLK_CLKDIV_HCLK_N_Msk) + 1;
-X    u32HclkDiv = (((CLK_T *) ((( uint32_t)0x50000000) + 0x00200))->CLKDIV & (0xFul << 0)) + 1;
-N
-N    /* Update System Core Clock */
-N    SystemCoreClock = u32Freq / u32HclkDiv;
-N
-N    CyclesPerUs = (SystemCoreClock + 500000) / 1000000;
 N}
 N
-N/*---------------------------------------------------------------------------------------------------------*/
-N/* Function: SystemInit                                                                                    */
-N/*                                                                                                         */
-N/* Parameters:                                                                                             */
-N/*      None                                                                                               */
-N/*                                                                                                         */
-N/* Returns:                                                                                                */
-N/*      None                                                                                               */
-N/*                                                                                                         */
-N/* Description:                                                                                            */
-N/*      The necessary initialization of system.                                                           */
-N/*                                                                                                         */
-N/*---------------------------------------------------------------------------------------------------------*/
-Nvoid SystemInit(void)
+N/**
+N * @brief       Enable GPIO interrupt
+N *
+N * @param[in]   port            GPIO port. It could be PA, PB, PC, PD, PE or PF.
+N * @param[in]   u32Pin          The pin of specified GPIO port.
+N *                              It could be 0 ~ 15 for PA, PB, PC, PD and PE GPIO port.
+N *                              It could be 0 ~ 3 for PF GPIO port.
+N * @param[in]   u32IntAttribs   The interrupt attribute of specified GPIO pin. It could be \n
+N *                              GPIO_INT_RISING, GPIO_INT_FALLING, GPIO_INT_BOTH_EDGE, GPIO_INT_HIGH, GPIO_INT_LOW.
+N *
+N * @return      None
+N *
+N * @details     This function is used to enable specified GPIO pin interrupt.
+N */
+Nvoid GPIO_EnableInt(GPIO_T *port, uint32_t u32Pin, uint32_t u32IntAttribs)
 N{
+N    port->IMD |= (((u32IntAttribs >> 24) & 0xFFUL) << u32Pin);
+N    port->IEN |= ((u32IntAttribs & 0xFFFFFFUL) << u32Pin);
 N}
+N
+N
+N/**
+N * @brief       Disable GPIO interrupt
+N *
+N * @param[in]   port        GPIO port. It could be PA, PB, PC, PD, PE or PF.
+N * @param[in]   u32Pin      The pin of specified GPIO port.
+N *                          It could be 0 ~ 15 for PA, PB, PC, PD and PE GPIO port.
+N *                          It could be 0 ~ 3 for PF GPIO port.
+N *
+N * @return      None
+N *
+N * @details     This function is used to enable specified GPIO pin interrupt.
+N */
+Nvoid GPIO_DisableInt(GPIO_T *port, uint32_t u32Pin)
+N{
+N    port->IMD &= ~(1UL << u32Pin);
+N    port->IEN &= ~((0x00010001UL) << u32Pin);
+N}
+N
+N
+N/*@}*/ /* end of group GPIO_EXPORTED_FUNCTIONS */
+N
+N/*@}*/ /* end of group GPIO_Driver */
+N
+N/*@}*/ /* end of group Device_Driver */
+N
+N/*** (C) COPYRIGHT 2014 Nuvoton Technology Corp. ***/

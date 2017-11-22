@@ -1,4 +1,16 @@
-#line 1 "..\\..\\..\\Library\\Device\\Nuvoton\\NUC100Series\\Source\\system_NUC100Series.c"
+#line 1 "..\\..\\..\\Library\\StdDriver\\src\\gpio.c"
+ 
+
+
+
+
+
+
+
+
+ 
+
+#line 1 "..\\..\\..\\Library\\Device\\Nuvoton\\NUC100Series\\Include\\NUC100Series.h"
  
 
 
@@ -10,6 +22,228 @@
 
 
  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+typedef enum IRQn
+{
+     
+    NonMaskableInt_IRQn         = -14,     
+    HardFault_IRQn              = -13,     
+    SVCall_IRQn                 = -5,      
+    PendSV_IRQn                 = -2,      
+    SysTick_IRQn                = -1,      
+
+     
+    BOD_IRQn                  = 0,         
+    WDT_IRQn                  = 1,         
+    EINT0_IRQn                = 2,         
+    EINT1_IRQn                = 3,         
+    GPAB_IRQn                 = 4,         
+    GPCDEF_IRQn               = 5,         
+    PWMA_IRQn                 = 6,         
+    PWMB_IRQn                 = 7,         
+    TMR0_IRQn                 = 8,         
+    TMR1_IRQn                 = 9,         
+    TMR2_IRQn                 = 10,        
+    TMR3_IRQn                 = 11,        
+    UART02_IRQn               = 12,        
+    UART1_IRQn                = 13,        
+    SPI0_IRQn                 = 14,        
+    SPI1_IRQn                 = 15,        
+    SPI2_IRQn                 = 16,        
+    SPI3_IRQn                 = 17,        
+    I2C0_IRQn                 = 18,        
+    I2C1_IRQn                 = 19,        
+    CAN0_IRQn                 = 20,        
+    CAN1_IRQn                 = 21,        
+    SC012_IRQn                = 22,        
+    USBD_IRQn                 = 23,        
+    PS2_IRQn                  = 24,        
+    ACMP_IRQn                 = 25,        
+    PDMA_IRQn                 = 26,        
+    I2S_IRQn                  = 27,        
+    PWRWU_IRQn                = 28,        
+    ADC_IRQn                  = 29,        
+    IRC_IRQn                  = 30,        
+    RTC_IRQn                  = 31         
+} IRQn_Type;
+
+
+
+
+
+
+ 
+
+ 
+
+
+
+
+
+   
+
+
+#line 1 "..\\..\\..\\Library\\CMSIS\\Include\\core_cm0.h"
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 89 "..\\..\\..\\Library\\CMSIS\\Include\\core_cm0.h"
+
+
+ 
+
+
+
+
+
+
+
+#line 114 "..\\..\\..\\Library\\CMSIS\\Include\\core_cm0.h"
+
 #line 1 "D:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
  
  
@@ -266,241 +500,6 @@ typedef unsigned     long long uintmax_t;
 
 
  
-#line 13 "..\\..\\..\\Library\\Device\\Nuvoton\\NUC100Series\\Source\\system_NUC100Series.c"
-#line 1 "..\\..\\..\\Library\\Device\\Nuvoton\\NUC100Series\\Include\\NUC100Series.h"
- 
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
- 
-
-
-
-
- 
-
-
-
- 
-
-typedef enum IRQn
-{
-     
-    NonMaskableInt_IRQn         = -14,     
-    HardFault_IRQn              = -13,     
-    SVCall_IRQn                 = -5,      
-    PendSV_IRQn                 = -2,      
-    SysTick_IRQn                = -1,      
-
-     
-    BOD_IRQn                  = 0,         
-    WDT_IRQn                  = 1,         
-    EINT0_IRQn                = 2,         
-    EINT1_IRQn                = 3,         
-    GPAB_IRQn                 = 4,         
-    GPCDEF_IRQn               = 5,         
-    PWMA_IRQn                 = 6,         
-    PWMB_IRQn                 = 7,         
-    TMR0_IRQn                 = 8,         
-    TMR1_IRQn                 = 9,         
-    TMR2_IRQn                 = 10,        
-    TMR3_IRQn                 = 11,        
-    UART02_IRQn               = 12,        
-    UART1_IRQn                = 13,        
-    SPI0_IRQn                 = 14,        
-    SPI1_IRQn                 = 15,        
-    SPI2_IRQn                 = 16,        
-    SPI3_IRQn                 = 17,        
-    I2C0_IRQn                 = 18,        
-    I2C1_IRQn                 = 19,        
-    CAN0_IRQn                 = 20,        
-    CAN1_IRQn                 = 21,        
-    SC012_IRQn                = 22,        
-    USBD_IRQn                 = 23,        
-    PS2_IRQn                  = 24,        
-    ACMP_IRQn                 = 25,        
-    PDMA_IRQn                 = 26,        
-    I2S_IRQn                  = 27,        
-    PWRWU_IRQn                = 28,        
-    ADC_IRQn                  = 29,        
-    IRC_IRQn                  = 30,        
-    RTC_IRQn                  = 31         
-} IRQn_Type;
-
-
-
-
-
-
- 
-
- 
-
-
-
-
-
-   
-
-
-#line 1 "..\\..\\..\\Library\\CMSIS\\Include\\core_cm0.h"
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
- 
-
-
- 
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-#line 89 "..\\..\\..\\Library\\CMSIS\\Include\\core_cm0.h"
-
-
- 
-
-
-
-
-
-
-
-#line 114 "..\\..\\..\\Library\\CMSIS\\Include\\core_cm0.h"
-
 #line 116 "..\\..\\..\\Library\\CMSIS\\Include\\core_cm0.h"
 #line 1 "..\\..\\..\\Library\\CMSIS\\Include\\core_cmInstr.h"
  
@@ -21081,65 +21080,91 @@ void ACMP_Close(ACMP_T *, uint32_t u32ChNum);
 
 
 
-#line 14 "..\\..\\..\\Library\\Device\\Nuvoton\\NUC100Series\\Source\\system_NUC100Series.c"
+#line 13 "..\\..\\..\\Library\\StdDriver\\src\\gpio.c"
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
 
 
 
 
  
-uint32_t SystemCoreClock  = (50000000UL);              
-uint32_t CyclesPerUs      = ((50000000UL) / 1000000);  
-uint32_t PllClock         = (50000000UL);              
-uint32_t gau32ClkSrcTbl[] = {(12000000UL), (32768UL), (50000000UL), (10000UL), 0, 0, 0, (22118400UL)};
-
-
-
-
-
-
- 
-void SystemCoreClockUpdate(void)              
+void GPIO_SetMode(GPIO_T *port, uint32_t u32PinMask, uint32_t u32Mode)
 {
-    uint32_t u32Freq, u32ClkSrc;
-    uint32_t u32HclkDiv;
+    uint32_t i;
 
-     
-    PllClock = CLK_GetPLLClockFreq();
-
-    u32ClkSrc = ((CLK_T *) ((( uint32_t)0x50000000) + 0x00200))->CLKSEL0 & (7ul << 0);
-
-    if(u32ClkSrc != (0x2UL<<0))
+    for(i = 0; i < 16; i++)
     {
-         
-        u32Freq = gau32ClkSrcTbl[u32ClkSrc];
+        if(u32PinMask & (1 << i))
+        {
+            port->PMD = (port->PMD & ~(0x3 << (i << 1))) | (u32Mode << (i << 1));
+        }
     }
-    else
-    {
-         
-        u32Freq = PllClock;
-    }
-
-    u32HclkDiv = (((CLK_T *) ((( uint32_t)0x50000000) + 0x00200))->CLKDIV & (0xFul << 0)) + 1;
-
-     
-    SystemCoreClock = u32Freq / u32HclkDiv;
-
-    CyclesPerUs = (SystemCoreClock + 500000) / 1000000;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-void SystemInit(void)
+void GPIO_EnableInt(GPIO_T *port, uint32_t u32Pin, uint32_t u32IntAttribs)
 {
+    port->IMD |= (((u32IntAttribs >> 24) & 0xFFUL) << u32Pin);
+    port->IEN |= ((u32IntAttribs & 0xFFFFFFUL) << u32Pin);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+void GPIO_DisableInt(GPIO_T *port, uint32_t u32Pin)
+{
+    port->IMD &= ~(1UL << u32Pin);
+    port->IEN &= ~((0x00010001UL) << u32Pin);
+}
+
+
+   
+
+   
+
+   
+
+ 

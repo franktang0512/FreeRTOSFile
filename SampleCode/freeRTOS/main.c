@@ -19,10 +19,12 @@
 #include "queue.h"
 #include "croutine.h"
 
+
 #define PLL_CLOCK           50000000
 
 
 static void vTaskMsgPro1(void* pvParameters);
+static void vTaskMsgPro2(void* pvParameters);
 
 static TaskHandle_t xHandleTaskMsgPro1 = NULL;
 
@@ -124,6 +126,10 @@ void UART0_Init(void)
 /* SPI1, SS0(PC.8), CLK(PC.9), MISO0(PC.10)   */
 /*                MOSI0(PC.11)                */
 /**********************************************/
+
+
+
+
 int main(void)
 {
     /* Unlock protected registers */
@@ -135,26 +141,46 @@ int main(void)
 	
 		UART0_Init();
 
+
 		printf("test\r\n");
-		//vStartThreadTasks();
+		vStartThreadTasks();
 		vTaskStartScheduler();
+
 
 		while(1);
 
 }
 
-/*
+
 void vStartThreadTasks( void )
 {
 		xTaskCreate(vTaskMsgPro1,(signed char *) "vTaskMsgPro1",512,NULL,2,( xTaskHandle * ) NULL );
+		xTaskCreate(vTaskMsgPro2,(signed char *) "vTaskMsgPro2",512,NULL,2,( xTaskHandle * ) NULL );
 }
-這段程式碼不知道要做什麼
-*/
+
 static void vTaskMsgPro1(void* pvParameters)
 {
 		while(1)
 		{
 				printf("Task1\r\n");
+//				GPIO_SetMode(PC, BIT12, GPIO_PMD_OUTPUT);
+//				GPIO_SetMode(PC, BIT13, GPIO_PMD_OUTPUT);
+//			  PC12 = 0;
+//				PC13 = 1;
+			
+
+				vTaskDelay(500);
+		}
+}
+static void vTaskMsgPro2(void* pvParameters)
+{
+		while(1)
+		{
+				printf("Task2\r\n");
+//				GPIO_SetMode(PC, BIT12, GPIO_PMD_OUTPUT);
+//				GPIO_SetMode(PC, BIT13, GPIO_PMD_OUTPUT);
+//				PC13 = 0;
+//				PC12 = 1;
 				vTaskDelay(1000);
 		}
 }
